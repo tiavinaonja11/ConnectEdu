@@ -7,8 +7,8 @@ import {
   HelpCircle,
   ClipboardCheck,
   Lightbulb,
-  X,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 
 interface Message {
@@ -31,11 +31,10 @@ const initialMessages: Message[] = [
   },
 ];
 
-export function AIChatPanel() {
+export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,47 +79,36 @@ export function AIChatPanel() {
     simulateResponse(prompt);
   };
 
-  if (!isOpen) {
-    return (
-      <motion.button
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        onClick={() => setIsOpen(true)}
-        className="fixed right-4 top-1/2 -translate-y-1/2 p-3 rounded-lg bg-primary text-primary-foreground ai-glow hover:scale-105 transition-transform duration-300"
-      >
-        <Sparkles className="w-5 h-5" />
-      </motion.button>
-    );
-  }
+  const handleClear = () => {
+    setMessages(initialMessages);
+  };
 
   return (
-    <motion.aside
-      initial={{ x: 20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-      className="w-[360px] min-w-[360px] h-screen border-l border-border flex flex-col bg-background animate-pulse-glow ai-glow-border"
-    >
+    <div className="max-w-[800px] mx-auto px-6 py-6 flex flex-col h-[calc(100vh-0px)]">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary" />
+      <div className="flex items-center justify-between mb-4 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center ai-glow">
+            <Sparkles className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold">EduConnect AI</h3>
-            <p className="font-mono-ui text-xs text-muted-foreground">Assistant académique</p>
+            <h1 className="text-3xl">EduConnect AI</h1>
+            <p className="font-mono-ui text-muted-foreground">Assistant académique intelligent</p>
           </div>
         </div>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="text-muted-foreground hover:text-foreground transition-colors duration-300"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
+        {messages.length > 1 && (
+          <button
+            onClick={handleClear}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:border-muted-foreground/30 transition-colors duration-300"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Nouvelle conversation
+          </button>
+        )}
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto scrollbar-hidden px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto scrollbar-hidden space-y-4 pb-4">
         <AnimatePresence>
           {messages.map((msg, i) => (
             <motion.div
@@ -131,7 +119,7 @@ export function AIChatPanel() {
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] rounded-lg px-3.5 py-2.5 text-sm leading-relaxed ${
+                className={`max-w-[70%] rounded-lg px-4 py-3 text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "bg-primary text-primary-foreground"
                     : "bg-surface border border-border"
@@ -159,7 +147,7 @@ export function AIChatPanel() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center gap-1.5 text-muted-foreground text-sm px-1"
+            className="flex items-center gap-2 text-muted-foreground text-sm px-1"
           >
             <div className="flex gap-1">
               {[0, 1, 2].map((i) => (
@@ -179,17 +167,17 @@ export function AIChatPanel() {
 
       {/* Quick Actions */}
       {messages.length <= 1 && (
-        <div className="px-4 pb-2">
+        <div className="pb-3 shrink-0">
           <p className="font-mono-ui text-xs text-muted-foreground mb-2">Actions rapides</p>
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-2 gap-2">
             {quickActions.map((action) => (
               <button
                 key={action.label}
                 onClick={() => handleQuickAction(action.prompt)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:border-muted-foreground/30 transition-colors duration-300"
+                className="flex items-center gap-2.5 px-4 py-3 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-muted-foreground/30 transition-colors duration-300"
               >
-                <action.icon className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span className="truncate">{action.label}</span>
+                <action.icon className="w-4 h-4 text-primary shrink-0" />
+                <span>{action.label}</span>
               </button>
             ))}
           </div>
@@ -197,24 +185,24 @@ export function AIChatPanel() {
       )}
 
       {/* Input */}
-      <div className="px-4 py-3 border-t border-border">
-        <div className="flex items-center gap-2 bg-surface rounded-lg border border-border px-3 py-2 focus-within:border-primary/40 transition-colors duration-300">
+      <div className="shrink-0 pt-3 border-t border-border">
+        <div className="flex items-center gap-3 bg-surface rounded-lg border border-border px-4 py-3 focus-within:border-primary/40 transition-colors duration-300">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            placeholder="Posez une question..."
+            placeholder="Posez une question à EduConnect AI..."
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim()}
-            className="p-1.5 rounded-md bg-primary text-primary-foreground disabled:opacity-30 hover:bg-primary/90 transition-all duration-300"
+            className="p-2 rounded-md bg-primary text-primary-foreground disabled:opacity-30 hover:bg-primary/90 transition-all duration-300"
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-4 h-4" />
           </button>
         </div>
       </div>
-    </motion.aside>
+    </div>
   );
 }
