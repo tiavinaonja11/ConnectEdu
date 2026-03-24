@@ -7,6 +7,8 @@ import CommunautePage from "@/pages/CommunautePage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import ParametresPage from "@/pages/ParametresPage";
 import AIPage from "@/pages/AIPage";
+import MessagesPage from "@/pages/MessagesPage";
+import CirclePage from "@/pages/CirclePage";
 import NotFound from "@/pages/NotFound";
 
 const Index = () => {
@@ -22,6 +24,8 @@ const Index = () => {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/parametres" element={<ParametresPage />} />
           <Route path="/assistant" element={<AIPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/cercle/:slug" element={<CirclePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
