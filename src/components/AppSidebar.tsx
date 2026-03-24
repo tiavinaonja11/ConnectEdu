@@ -9,6 +9,7 @@ import {
   Bell,
   Settings,
   Sparkles,
+  MessageCircle,
   GraduationCap,
   Beaker,
   Globe,
@@ -20,6 +21,7 @@ import {
 const navItems = [
   { icon: Home, label: "Fil d'actualité", path: "/" },
   { icon: Sparkles, label: "EduConnect AI", path: "/assistant" },
+  { icon: MessageCircle, label: "Messages", path: "/messages", badge: 3 },
   { icon: BookOpen, label: "Mes Cours", path: "/cours" },
   { icon: FileText, label: "Ressources", path: "/ressources" },
   { icon: Users, label: "Communauté", path: "/communaute" },
@@ -28,10 +30,10 @@ const navItems = [
 ];
 
 const circles = [
-  { icon: Beaker, label: "Physique Quantique", members: 128, color: "text-primary" },
-  { icon: Code, label: "Intelligence Artificielle", members: 342, color: "text-accent" },
-  { icon: Globe, label: "Sciences Politiques", members: 89, color: "text-emerald-400" },
-  { icon: PenTool, label: "Littérature Comparée", members: 67, color: "text-amber-400" },
+  { icon: Beaker, label: "Physique Quantique", members: 128, color: "text-primary", slug: "physique-quantique" },
+  { icon: Code, label: "Intelligence Artificielle", members: 342, color: "text-accent", slug: "intelligence-artificielle" },
+  { icon: Globe, label: "Sciences Politiques", members: 89, color: "text-emerald-400", slug: "sciences-politiques" },
+  { icon: PenTool, label: "Littérature Comparée", members: 67, color: "text-amber-400", slug: "litterature-comparee" },
 ];
 
 export function AppSidebar() {
@@ -98,18 +100,29 @@ export function AppSidebar() {
           </button>
           {circlesOpen && (
             <div className="space-y-0.5 mt-1">
-              {circles.map((circle) => (
-                <button
-                  key={circle.label}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt/50 transition-colors duration-300 group"
-                >
-                  <circle.icon className={`w-4 h-4 ${circle.color}`} />
-                  <span className="truncate">{circle.label}</span>
-                  <span className="ml-auto font-mono-ui text-xs text-muted-foreground/60 group-hover:text-muted-foreground transition-colors duration-300">
-                    {circle.members}
-                  </span>
-                </button>
-              ))}
+              {circles.map((circle) => {
+                const isCircleActive = location.pathname === `/cercle/${circle.slug}`;
+                return (
+                  <Link
+                    key={circle.label}
+                    to={`/cercle/${circle.slug}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-300 group relative ${
+                      isCircleActive
+                        ? "bg-surface-alt text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                    }`}
+                  >
+                    {isCircleActive && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r" />
+                    )}
+                    <circle.icon className={`w-4 h-4 ${circle.color}`} />
+                    <span className="truncate">{circle.label}</span>
+                    <span className="ml-auto font-mono-ui text-xs text-muted-foreground/60 group-hover:text-muted-foreground transition-colors duration-300">
+                      {circle.members}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
