@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Feed } from "@/components/Feed";
-import { AIChatPanel } from "@/components/AIChatPanel";
 import CoursPage from "@/pages/CoursPage";
 import RessourcesPage from "@/pages/RessourcesPage";
 import CommunautePage from "@/pages/CommunautePage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import ParametresPage from "@/pages/ParametresPage";
+import AIPage from "@/pages/AIPage";
 import NotFound from "@/pages/NotFound";
 
 const Index = () => {
@@ -21,10 +21,10 @@ const Index = () => {
           <Route path="/communaute" element={<CommunautePage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/parametres" element={<ParametresPage />} />
+          <Route path="/assistant" element={<AIPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <AIChatPanel />
     </div>
   );
 };

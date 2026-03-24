@@ -8,6 +8,7 @@ import {
   FileText,
   Bell,
   Settings,
+  Sparkles,
   GraduationCap,
   Beaker,
   Globe,
