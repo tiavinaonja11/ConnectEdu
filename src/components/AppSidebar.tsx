@@ -19,6 +19,7 @@ import {
 
 const navItems = [
   { icon: Home, label: "Fil d'actualité", path: "/" },
+  { icon: Sparkles, label: "EduConnect AI", path: "/assistant" },
   { icon: BookOpen, label: "Mes Cours", path: "/cours" },
   { icon: FileText, label: "Ressources", path: "/ressources" },
   { icon: Users, label: "Communauté", path: "/communaute" },
