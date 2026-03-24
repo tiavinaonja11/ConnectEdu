@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useLocation, Link } from "react-router-dom";
 import {
   Home,
   BookOpen,
@@ -16,12 +17,12 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { icon: Home, label: "Fil d'actualité", active: true },
-  { icon: BookOpen, label: "Mes Cours" },
-  { icon: FileText, label: "Ressources" },
-  { icon: Users, label: "Communauté" },
-  { icon: Bell, label: "Notifications", badge: 3 },
-  { icon: Settings, label: "Paramètres" },
+  { icon: Home, label: "Fil d'actualité", path: "/" },
+  { icon: BookOpen, label: "Mes Cours", path: "/cours" },
+  { icon: FileText, label: "Ressources", path: "/ressources" },
+  { icon: Users, label: "Communauté", path: "/communaute" },
+  { icon: Bell, label: "Notifications", path: "/notifications", badge: 3 },
+  { icon: Settings, label: "Paramètres", path: "/parametres" },
 ];
 
 const circles = [
@@ -33,6 +34,7 @@ const circles = [
 
 export function AppSidebar() {
   const [circlesOpen, setCirclesOpen] = useState(true);
+  const location = useLocation();
 
   return (
     <motion.aside
@@ -43,36 +45,40 @@ export function AppSidebar() {
     >
       {/* Logo */}
       <div className="px-5 py-5 border-b border-border">
-        <div className="flex items-center gap-2.5">
+        <Link to="/" className="flex items-center gap-2.5">
           <GraduationCap className="w-7 h-7 text-primary" />
           <span className="font-serif text-xl tracking-tight">EduConnect</span>
-        </div>
+        </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4">
         <div className="space-y-0.5">
-          {navItems.map((item) => (
-            <button
-              key={item.label}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-300 group relative ${
-                item.active
-                  ? "bg-surface-alt text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
-              }`}
-            >
-              {item.active && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r" />
-              )}
-              <item.icon className="w-4 h-4" />
-              <span>{item.label}</span>
-              {item.badge && (
-                <span className="ml-auto font-mono-ui text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded">
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.label}
+                to={item.path}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-300 group relative ${
+                  isActive
+                    ? "bg-surface-alt text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+                }`}
+              >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r" />
+                )}
+                <item.icon className="w-4 h-4" />
+                <span>{item.label}</span>
+                {item.badge && (
+                  <span className="ml-auto font-mono-ui text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Circles */}
