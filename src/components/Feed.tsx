@@ -1,5 +1,15 @@
 import { PostCard } from "./PostCard";
-import { Plus, TrendingUp } from "lucide-react";
+import { Plus, TrendingUp, Image, Paperclip, Smile, Video } from "lucide-react";
+import { motion } from "framer-motion";
+
+const stories = [
+  { name: "Toi", initials: "A", isOwn: true },
+  { name: "Sarah B.", initials: "SB" },
+  { name: "Pr. Leclerc", initials: "JL" },
+  { name: "Karim T.", initials: "KT" },
+  { name: "Dr. Ndiaye", initials: "FN" },
+  { name: "Youssef E.", initials: "YE" },
+];
 
 const posts = [
   {
@@ -56,36 +66,85 @@ const posts = [
 
 export function Feed() {
   return (
-    <div className="flex-1 min-w-0 max-w-[800px] mx-auto px-6 py-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl">Fil d'actualité</h1>
-          <p className="font-mono-ui text-muted-foreground mt-1">
-            Dernières publications de votre réseau
-          </p>
+    <div className="flex-1 min-w-0 max-w-[680px] mx-auto px-4 py-6">
+      {/* Stories */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex gap-3 mb-6 overflow-x-auto scrollbar-hidden pb-2"
+      >
+        {stories.map((s, i) => (
+          <button key={i} className="flex flex-col items-center gap-1.5 shrink-0">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center text-sm font-bold ${
+              s.isOwn
+                ? "border-2 border-dashed border-muted-foreground/30 text-muted-foreground hover:border-primary hover:text-primary transition-colors duration-200"
+                : "gradient-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2 ring-offset-background"
+            }`}>
+              {s.isOwn ? <Plus className="w-5 h-5" /> : s.initials}
+            </div>
+            <span className="text-[11px] text-muted-foreground font-medium">{s.name}</span>
+          </button>
+        ))}
+      </motion.div>
+
+      {/* Create Post */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="rounded-2xl bg-card card-elevated p-4 mb-6"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
+            A
+          </div>
+          <div className="flex-1 bg-surface-alt/60 hover:bg-surface-alt rounded-full px-4 py-2.5 cursor-pointer transition-colors duration-200">
+            <span className="text-sm text-muted-foreground">Quoi de neuf, Amina ?</span>
+          </div>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors duration-300">
-          <Plus className="w-4 h-4" />
-          Publier
-        </button>
-      </div>
+        <div className="flex items-center gap-1 pt-3 border-t border-border/50">
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm text-muted-foreground hover:bg-surface-alt/50 transition-colors duration-200">
+            <Video className="w-4 h-4 text-destructive" />
+            <span className="font-medium text-xs">Vidéo</span>
+          </button>
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm text-muted-foreground hover:bg-surface-alt/50 transition-colors duration-200">
+            <Image className="w-4 h-4 text-success" />
+            <span className="font-medium text-xs">Photo</span>
+          </button>
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm text-muted-foreground hover:bg-surface-alt/50 transition-colors duration-200">
+            <Paperclip className="w-4 h-4 text-primary" />
+            <span className="font-medium text-xs">Document</span>
+          </button>
+          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm text-muted-foreground hover:bg-surface-alt/50 transition-colors duration-200">
+            <Smile className="w-4 h-4 text-warning" />
+            <span className="font-medium text-xs">Humeur</span>
+          </button>
+        </div>
+      </motion.div>
 
       {/* Trending */}
-      <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-border mb-6">
-        <TrendingUp className="w-4 h-4 text-primary" />
-        <span className="text-sm text-muted-foreground">Tendances :</span>
-        <div className="flex gap-2">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+        className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-card card-elevated mb-6"
+      >
+        <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
+          <TrendingUp className="w-4 h-4 text-primary" />
+        </div>
+        <span className="text-sm font-medium text-muted-foreground">Tendances</span>
+        <div className="flex gap-2 flex-1 overflow-x-auto scrollbar-hidden">
           {["#partiels2025", "#IA", "#quantique"].map((tag) => (
             <span
               key={tag}
-              className="font-mono-ui text-xs px-2 py-0.5 rounded bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors duration-300"
+              className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium cursor-pointer hover:bg-primary/20 transition-colors duration-200 shrink-0"
             >
               {tag}
             </span>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Posts */}
       <div className="space-y-4">
