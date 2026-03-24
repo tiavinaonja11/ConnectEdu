@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Search, Circle, Plus } from "lucide-react";
+import { Send, Search, Plus, Phone, Video, MoreVertical, Smile, Paperclip, Image } from "lucide-react";
 
 interface ChatMessage {
   id: number;
@@ -18,14 +18,15 @@ interface Conversation {
   lastMessage: string;
   time: string;
   unread: number;
+  online?: boolean;
 }
 
 const conversations: Conversation[] = [
-  { id: "1", name: "Sarah Benali", initials: "SB", lastMessage: "Tu as compris l'exo 3 du TD ?", time: "14:32", unread: 2 },
-  { id: "2", name: "Karim Touré", initials: "KT", lastMessage: "Merci pour les notes !", time: "12:10", unread: 0 },
+  { id: "1", name: "Sarah Benali", initials: "SB", lastMessage: "Tu as compris l'exo 3 du TD ?", time: "14:32", unread: 2, online: true },
+  { id: "2", name: "Karim Touré", initials: "KT", lastMessage: "Merci pour les notes !", time: "12:10", unread: 0, online: true },
   { id: "3", name: "Pr. Leclerc", initials: "JL", lastMessage: "Vous pouvez passer me voir demain.", time: "Hier", unread: 1 },
   { id: "4", name: "Groupe IA — Projet", initials: "IA", lastMessage: "J'ai push le code sur le repo", time: "Hier", unread: 0 },
-  { id: "5", name: "Youssef El Amrani", initials: "YE", lastMessage: "On se retrouve à la BU ?", time: "Lun", unread: 0 },
+  { id: "5", name: "Youssef El Amrani", initials: "YE", lastMessage: "On se retrouve à la BU ?", time: "Lun", unread: 0, online: true },
 ];
 
 const chatHistories: Record<string, ChatMessage[]> = {
@@ -85,20 +86,20 @@ export default function MessagesPage() {
   return (
     <div className="flex h-screen">
       {/* Conversations list */}
-      <div className="w-[280px] min-w-[280px] border-r border-border flex flex-col">
+      <div className="w-[320px] min-w-[320px] border-r border-border flex flex-col bg-surface/50">
         <div className="px-4 py-4 border-b border-border">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-serif text-xl">Messages</h2>
-            <button className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors duration-300">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-serif text-2xl">Messages</h2>
+            <button className="w-8 h-8 rounded-full bg-surface-alt flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-alt/80 transition-all duration-200">
               <Plus className="w-4 h-4" />
             </button>
           </div>
-          <div className="flex items-center gap-2 bg-surface rounded-lg border border-border px-3 py-1.5">
-            <Search className="w-3.5 h-3.5 text-muted-foreground" />
+          <div className="flex items-center gap-2 bg-surface-alt rounded-xl px-3 py-2.5">
+            <Search className="w-4 h-4 text-muted-foreground" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher..."
+              placeholder="Rechercher dans Messenger..."
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
             />
           </div>
@@ -108,24 +109,29 @@ export default function MessagesPage() {
             <button
               key={convo.id}
               onClick={() => setActiveConvo(convo.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 transition-colors duration-300 text-left ${
+              className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 text-left ${
                 activeConvo === convo.id
-                  ? "bg-surface-alt"
+                  ? "bg-primary/10"
                   : "hover:bg-surface-alt/50"
               }`}
             >
-              <div className="w-9 h-9 rounded-lg bg-surface-alt flex items-center justify-center text-sm font-semibold shrink-0">
-                {convo.initials}
+              <div className="relative">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+                  activeConvo === convo.id ? "gradient-primary text-primary-foreground" : "bg-surface-alt text-foreground"
+                }`}>
+                  {convo.initials}
+                </div>
+                {convo.online && <div className="absolute bottom-0 right-0 online-indicator" />}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium truncate">{convo.name}</span>
-                  <span className="font-mono-ui text-xs text-muted-foreground shrink-0 ml-2">{convo.time}</span>
+                  <span className={`text-sm truncate ${convo.unread > 0 ? "font-bold" : "font-medium"}`}>{convo.name}</span>
+                  <span className={`text-[11px] shrink-0 ml-2 ${convo.unread > 0 ? "text-primary font-semibold" : "text-muted-foreground"}`}>{convo.time}</span>
                 </div>
-                <p className="text-xs text-muted-foreground truncate mt-0.5">{convo.lastMessage}</p>
+                <p className={`text-xs truncate mt-0.5 ${convo.unread > 0 ? "text-foreground font-medium" : "text-muted-foreground"}`}>{convo.lastMessage}</p>
               </div>
               {convo.unread > 0 && (
-                <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium shrink-0">
+                <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-[11px] flex items-center justify-center font-bold shrink-0">
                   {convo.unread}
                 </span>
               )}
@@ -138,12 +144,26 @@ export default function MessagesPage() {
       <div className="flex-1 flex flex-col">
         {/* Chat header */}
         <div className="px-5 py-3 border-b border-border flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-surface-alt flex items-center justify-center text-sm font-semibold">
-            {activeConversation?.initials}
+          <div className="relative">
+            <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
+              {activeConversation?.initials}
+            </div>
+            {activeConversation?.online && <div className="absolute bottom-0 right-0 online-indicator" />}
           </div>
-          <div>
-            <p className="text-sm font-medium">{activeConversation?.name}</p>
-            <p className="font-mono-ui text-xs text-muted-foreground">En ligne</p>
+          <div className="flex-1">
+            <p className="text-sm font-semibold">{activeConversation?.name}</p>
+            <p className="text-[11px] text-success font-medium">En ligne</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <button className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-all duration-200">
+              <Phone className="w-4 h-4" />
+            </button>
+            <button className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-all duration-200">
+              <Video className="w-4 h-4" />
+            </button>
+            <button className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-all duration-200">
+              <MoreVertical className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -153,28 +173,28 @@ export default function MessagesPage() {
             {currentMessages.map((msg) => (
               <motion.div
                 key={msg.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.2 }}
                 className={`flex ${msg.isMe ? "justify-end" : "justify-start"}`}
               >
                 <div className={`flex items-end gap-2 max-w-[65%] ${msg.isMe ? "flex-row-reverse" : ""}`}>
                   {!msg.isMe && (
-                    <div className="w-7 h-7 rounded-lg bg-surface-alt flex items-center justify-center text-xs font-semibold shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-surface-alt flex items-center justify-center text-[10px] font-bold shrink-0">
                       {msg.initials}
                     </div>
                   )}
                   <div>
                     <div
-                      className={`rounded-lg px-3.5 py-2 text-sm leading-relaxed ${
+                      className={`px-4 py-2.5 text-sm leading-relaxed ${
                         msg.isMe
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-surface border border-border"
+                          ? "gradient-primary text-primary-foreground rounded-2xl rounded-br-md"
+                          : "bg-surface-alt rounded-2xl rounded-bl-md"
                       }`}
                     >
                       {msg.content}
                     </div>
-                    <p className={`font-mono-ui text-xs text-muted-foreground/50 mt-1 ${msg.isMe ? "text-right" : ""}`}>
+                    <p className={`text-[10px] text-muted-foreground/50 mt-1 ${msg.isMe ? "text-right" : ""}`}>
                       {msg.time}
                     </p>
                   </div>
@@ -186,19 +206,32 @@ export default function MessagesPage() {
         </div>
 
         {/* Input */}
-        <div className="px-5 py-3 border-t border-border">
-          <div className="flex items-center gap-3 bg-surface rounded-lg border border-border px-4 py-2.5 focus-within:border-primary/40 transition-colors duration-300">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-              placeholder="Écrire un message..."
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
-            />
+        <div className="px-4 py-3 border-t border-border">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <button className="w-9 h-9 rounded-full flex items-center justify-center text-primary hover:bg-primary/10 transition-all duration-200">
+                <Image className="w-5 h-5" />
+              </button>
+              <button className="w-9 h-9 rounded-full flex items-center justify-center text-primary hover:bg-primary/10 transition-all duration-200">
+                <Paperclip className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 flex items-center gap-2 bg-surface-alt rounded-full px-4 py-2.5">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+                placeholder="Aa"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
+              />
+              <button className="text-muted-foreground hover:text-foreground transition-colors duration-200">
+                <Smile className="w-5 h-5" />
+              </button>
+            </div>
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="p-1.5 rounded-md bg-primary text-primary-foreground disabled:opacity-30 hover:bg-primary/90 transition-all duration-300"
+              className="w-9 h-9 rounded-full gradient-primary flex items-center justify-center text-primary-foreground disabled:opacity-30 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200"
             >
               <Send className="w-4 h-4" />
             </button>
