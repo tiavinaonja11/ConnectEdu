@@ -26,6 +26,7 @@ export default {
         surface: {
           DEFAULT: "hsl(var(--surface))",
           alt: "hsl(var(--surface-alt))",
+          elevated: "hsl(var(--surface-elevated))",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -38,6 +39,14 @@ export default {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -93,8 +102,12 @@ export default {
           to: { opacity: "1", transform: "translateX(0)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(239 84% 67% / 0.15)" },
-          "50%": { boxShadow: "0 0 30px hsl(239 84% 67% / 0.25)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(217 91% 60% / 0.15)" },
+          "50%": { boxShadow: "0 0 30px hsl(217 91% 60% / 0.3)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
@@ -104,6 +117,7 @@ export default {
         "slide-in-left": "slide-in-left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
         "slide-in-right": "slide-in-right 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
+        "shimmer": "shimmer 2s linear infinite",
       },
     },
   },
