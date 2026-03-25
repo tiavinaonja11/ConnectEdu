@@ -47,6 +47,7 @@ export function AppSidebar() {
   const [circlesOpen, setCirclesOpen] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <TooltipProvider delayDuration={0}>
