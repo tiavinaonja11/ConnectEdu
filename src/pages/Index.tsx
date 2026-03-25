@@ -13,7 +13,7 @@ import NotFound from "@/pages/NotFound";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       <AppSidebar />
       <main className="flex-1 overflow-y-auto scrollbar-hidden">
         <Routes>
