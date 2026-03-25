@@ -46,7 +46,7 @@ export function AppSidebar() {
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-      className="w-[280px] min-w-[280px] h-screen border-r border-border bg-sidebar flex flex-col scrollbar-hidden overflow-y-auto"
+      className="w-[280px] min-w-[280px] h-screen sticky top-0 border-r border-border bg-sidebar flex flex-col scrollbar-hidden overflow-y-auto"
     >
       {/* Logo */}
       <div className="px-5 py-5 border-b border-border">
