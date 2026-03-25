@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useLocation, Link } from "react-router-dom";
 import {
   Home,
@@ -19,8 +19,11 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTheme } from "@/hooks/use-theme";
 
 const navItems = [
   { icon: Home, label: "Fil d'actualité", path: "/" },
@@ -44,6 +47,7 @@ export function AppSidebar() {
   const [circlesOpen, setCirclesOpen] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -71,12 +75,20 @@ export function AppSidebar() {
               </motion.span>
             )}
           </Link>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt/60 transition-colors duration-200"
-          >
-            {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt/60 transition-colors duration-200"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt/60 transition-colors duration-200"
+            >
+              {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}
