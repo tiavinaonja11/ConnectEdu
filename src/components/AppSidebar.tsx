@@ -75,12 +75,20 @@ export function AppSidebar() {
               </motion.span>
             )}
           </Link>
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt/60 transition-colors duration-200"
-          >
-            {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt/60 transition-colors duration-200"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt/60 transition-colors duration-200"
+            >
+              {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}
