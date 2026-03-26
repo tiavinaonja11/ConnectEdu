@@ -1,4 +1,6 @@
 import { PostCard } from "./PostCard";
+import { PollCard } from "./PollCard";
+import { SearchBar } from "./SearchBar";
 import { Plus, TrendingUp, Image, Paperclip, Smile, Video, Flame, Calendar, BookOpen, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -80,10 +82,20 @@ export function Feed() {
   return (
     <div className="flex-1 min-w-0">
       <div className="max-w-[680px] mx-auto px-4 py-5">
+        {/* Search */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-5"
+        >
+          <SearchBar />
+        </motion.div>
+
         {/* Welcome Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.03 }}
           className="mb-5"
         >
           <div className="flex items-center gap-2 mb-1">
@@ -268,10 +280,31 @@ export function Feed() {
           </div>
         </motion.div>
 
-        {/* Posts */}
+        {/* Posts + Poll */}
         <div className="space-y-4">
-          {posts.map((post, i) => (
+          {posts.slice(0, 2).map((post, i) => (
             <PostCard key={i} {...post} index={i} />
+          ))}
+
+          {/* Poll */}
+          <PollCard
+            author="Pr. Kamara"
+            initials="AK"
+            role="Professeur · Informatique"
+            time="il y a 5h"
+            question="Quel framework préférez-vous pour le projet de fin d'année ?"
+            options={[
+              { id: "react", text: "React + TypeScript", votes: 45 },
+              { id: "vue", text: "Vue.js 3", votes: 23 },
+              { id: "angular", text: "Angular", votes: 12 },
+              { id: "svelte", text: "Svelte", votes: 18 },
+            ]}
+            totalVotes={98}
+            index={2}
+          />
+
+          {posts.slice(2).map((post, i) => (
+            <PostCard key={i + 2} {...post} index={i + 3} />
           ))}
         </div>
       </div>
