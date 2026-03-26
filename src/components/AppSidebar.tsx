@@ -219,7 +219,7 @@ export function AppSidebar() {
         <div className="px-2 py-4 border-t border-border">
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className={`flex items-center gap-3 ${collapsed ? "justify-center px-2" : "px-3"} py-2.5 rounded-xl hover:bg-surface-alt/60 transition-all duration-200 cursor-pointer group`}>
+              <Link to="/profil" className={`flex items-center gap-3 ${collapsed ? "justify-center px-2" : "px-3"} py-2.5 rounded-xl hover:bg-surface-alt/60 transition-all duration-200 cursor-pointer group`}>
                 <div className="relative">
                   <div className="w-9 h-9 min-w-[36px] rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
                     A
@@ -235,7 +235,7 @@ export function AppSidebar() {
                     <LogOut className="w-4 h-4 text-muted-foreground/0 group-hover:text-muted-foreground transition-all duration-200" />
                   </>
                 )}
-              </div>
+              </Link>
             </TooltipTrigger>
             {collapsed && (
               <TooltipContent side="right" sideOffset={8}>
