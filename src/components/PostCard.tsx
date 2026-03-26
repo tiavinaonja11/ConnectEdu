@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Heart, MessageSquare, Bookmark, Share2, FileText, CheckCircle, MoreHorizontal } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, MessageSquare, Bookmark, Share2, FileText, CheckCircle, MoreHorizontal, Flag } from "lucide-react";
+import { ReactionsPopover, useReactions } from "./ReactionsPopover";
+import { CommentsSection } from "./CommentsSection";
 
 interface PostCardProps {
   author: string;
@@ -18,37 +20,28 @@ interface PostCardProps {
 }
 
 export function PostCard({
-  author,
-  role,
-  initials,
-  time,
-  content,
-  tags,
-  likes,
-  comments,
-  verified,
-  hasAttachment,
-  attachmentName,
-  index,
+  author, role, initials, time, content, tags, likes, comments,
+  verified, hasAttachment, attachmentName, index,
 }: PostCardProps) {
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
+  const [saved, setSaved] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [showReactions, setShowReactions] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const { activeReaction, toggleReaction, getReactionEmoji } = useReactions();
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+  const handleReact = (key: string) => {
+    const wasActive = activeReaction === key;
+    toggleReaction(key);
+    setLikeCount(wasActive ? likes : likes + 1);
+    setShowReactions(false);
   };
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{
-        duration: 0.5,
-        delay: index * 0.08,
-        ease: [0.2, 0.8, 0.2, 1],
-      }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.2, 0.8, 0.2, 1] }}
       className="rounded-2xl bg-card card-elevated card-hover overflow-hidden"
     >
       <div className="p-5">
@@ -60,9 +53,7 @@ export function PostCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-semibold">{author}</span>
-              {verified && (
-                <CheckCircle className="w-4 h-4 text-primary fill-primary/20" />
-              )}
+              {verified && <CheckCircle className="w-4 h-4 text-primary fill-primary/20" />}
             </div>
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
               <span>{role}</span>
@@ -70,12 +61,35 @@ export function PostCard({
               <span>{time}</span>
             </div>
           </div>
-          <button className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-all duration-200">
-            <MoreHorizontal className="w-4 h-4" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowReport(!showReport)}
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-all duration-200"
+            >
+              <MoreHorizontal className="w-4 h-4" />
+            </button>
+            <AnimatePresence>
+              {showReport && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute right-0 top-full mt-1 bg-card border border-border rounded-xl shadow-xl z-40 overflow-hidden"
+                >
+                  <button
+                    onClick={() => setShowReport(false)}
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 w-full transition-colors"
+                  >
+                    <Flag className="w-4 h-4" />
+                    Signaler
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* Content */}
+        {/* Content with @mentions */}
         <p className="text-[15px] leading-relaxed mb-4">{content}</p>
 
         {/* Attachment */}
@@ -106,18 +120,37 @@ export function PostCard({
 
       {/* Actions */}
       <div className="flex items-center border-t border-border/50 px-2">
+        <div className="relative flex-1">
+          <button
+            onClick={() => handleReact("love")}
+            onMouseEnter={() => setShowReactions(true)}
+            onMouseLeave={() => setShowReactions(false)}
+            className={`w-full flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-1 my-1 ${
+              activeReaction
+                ? "text-destructive"
+                : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+            }`}
+          >
+            {activeReaction ? (
+              <span className="text-lg leading-none">{getReactionEmoji(activeReaction)}</span>
+            ) : (
+              <Heart className="w-[18px] h-[18px]" />
+            )}
+            <span className="tabular-nums text-xs">{likeCount}</span>
+          </button>
+          <div
+            onMouseEnter={() => setShowReactions(true)}
+            onMouseLeave={() => setShowReactions(false)}
+          >
+            <ReactionsPopover show={showReactions} onReact={handleReact} />
+          </div>
+        </div>
         <button
-          onClick={handleLike}
+          onClick={() => setShowComments(!showComments)}
           className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all duration-200 rounded-lg mx-1 my-1 ${
-            liked
-              ? "text-destructive"
-              : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
+            showComments ? "text-primary" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/50"
           }`}
         >
-          <Heart className={`w-[18px] h-[18px] transition-transform duration-200 ${liked ? "fill-current scale-110" : ""}`} />
-          <span className="tabular-nums text-xs">{likeCount}</span>
-        </button>
-        <button className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface-alt/50 transition-all duration-200 rounded-lg mx-1 my-1">
           <MessageSquare className="w-[18px] h-[18px]" />
           <span className="tabular-nums text-xs">{comments}</span>
         </button>
@@ -134,6 +167,11 @@ export function PostCard({
           <Bookmark className={`w-[18px] h-[18px] ${saved ? "fill-current" : ""}`} />
         </button>
       </div>
+
+      {/* Comments */}
+      <AnimatePresence>
+        {showComments && <CommentsSection postIndex={index} />}
+      </AnimatePresence>
     </motion.article>
   );
 }

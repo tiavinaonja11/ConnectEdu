@@ -9,6 +9,7 @@ import ParametresPage from "@/pages/ParametresPage";
 import AIPage from "@/pages/AIPage";
 import MessagesPage from "@/pages/MessagesPage";
 import CirclePage from "@/pages/CirclePage";
+import ProfilPage from "@/pages/ProfilPage";
 import NotFound from "@/pages/NotFound";
 
 const Index = () => {
@@ -26,6 +27,7 @@ const Index = () => {
           <Route path="/assistant" element={<AIPage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/cercle/:slug" element={<CirclePage />} />
+          <Route path="/profil" element={<ProfilPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
