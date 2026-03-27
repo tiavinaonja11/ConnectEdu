@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import type { AppRole } from '@/integrations/supabase/types';
+import type { Database } from '@/integrations/supabase/types';
+
+type AppRole = Database['public']['Enums']['app_role'];
 
 interface Profile {
   id: string;
@@ -21,6 +23,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, metadata: Record<string, string>) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
   isEnseignant: boolean;
   isAdmin: boolean;
 }
@@ -105,6 +108,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(null);
   };
 
+  const refreshProfile = async () => {
+    if (user) await fetchProfile(user.id);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -116,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUp,
         signIn,
         signOut,
+        refreshProfile,
         isEnseignant: role === 'enseignant',
         isAdmin: role === 'admin',
       }}
