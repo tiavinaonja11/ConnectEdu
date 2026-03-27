@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   Home,
   BookOpen,
@@ -21,9 +21,11 @@ import {
   PanelLeft,
   Sun,
   Moon,
+  BadgeCheck,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/hooks/use-auth";
 
 const navItems = [
   { icon: Home, label: "Fil d'actualité", path: "/" },
@@ -47,7 +49,20 @@ export function AppSidebar() {
   const [circlesOpen, setCirclesOpen] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { profile, role, signOut, isEnseignant } = useAuth();
+
+  const displayName = profile?.full_name || "Utilisateur";
+  const initials = displayName.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
+  const roleLabel = isEnseignant
+    ? "Enseignant"
+    : role === "admin" ? "Admin" : profile?.filiere ? `${profile.promotion || ""} ${profile.filiere}` : "Étudiant";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <TooltipProvider delayDuration={0}>
