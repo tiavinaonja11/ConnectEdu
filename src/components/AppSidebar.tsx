@@ -237,24 +237,32 @@ export function AppSidebar() {
               <Link to="/profil" className={`flex items-center gap-3 ${collapsed ? "justify-center px-2" : "px-3"} py-2.5 rounded-xl hover:bg-surface-alt/60 transition-all duration-200 cursor-pointer group`}>
                 <div className="relative">
                   <div className="w-9 h-9 min-w-[36px] rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
-                    A
+                    {initials || "?"}
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 online-indicator" />
                 </div>
                 {!collapsed && (
                   <>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">Amina Diallo</p>
-                      <p className="font-mono-ui text-[11px] text-muted-foreground">M2 Informatique</p>
+                      <p className="text-sm font-semibold truncate flex items-center gap-1">
+                        {displayName}
+                        {isEnseignant && <BadgeCheck className="w-3.5 h-3.5 text-primary" />}
+                      </p>
+                      <p className="font-mono-ui text-[11px] text-muted-foreground truncate">{roleLabel}</p>
                     </div>
-                    <LogOut className="w-4 h-4 text-muted-foreground/0 group-hover:text-muted-foreground transition-all duration-200" />
+                    <button
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSignOut(); }}
+                      className="p-1 rounded-lg text-muted-foreground/0 group-hover:text-muted-foreground hover:!text-destructive transition-all duration-200"
+                    >
+                      <LogOut className="w-4 h-4" />
+                    </button>
                   </>
                 )}
               </Link>
             </TooltipTrigger>
             {collapsed && (
               <TooltipContent side="right" sideOffset={8}>
-                Amina Diallo
+                {displayName}
               </TooltipContent>
             )}
           </Tooltip>
