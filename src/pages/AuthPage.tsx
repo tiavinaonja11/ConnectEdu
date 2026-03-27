@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { GraduationCap, Mail, Lock, User, BookOpen, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 const filieres = ["Informatique", "Physique", "Mathématiques", "Littérature", "Sciences Politiques", "Biologie", "Chimie", "Droit"];
 const promotions = ["L1", "L2", "L3", "M1", "M2", "Doctorat"];
@@ -10,11 +12,52 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<"etudiant" | "enseignant">("etudiant");
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    filiere: "",
+    promotion: "",
+  });
   const navigate = useNavigate();
+  const { signUp, signIn } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const updateField = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/");
+    setLoading(true);
+
+    try {
+      if (mode === "signup") {
+        const metadata: Record<string, string> = {
+          full_name: formData.fullName,
+          role,
+        };
+        if (role === "etudiant") {
+          metadata.filiere = formData.filiere;
+          metadata.promotion = formData.promotion;
+        }
+        const { error } = await signUp(formData.email, formData.password, metadata);
+        if (error) {
+          toast.error(error.message);
+        } else {
+          toast.success("Compte créé ! Vérifiez votre email pour confirmer.");
+        }
+      } else {
+        const { error } = await signIn(formData.email, formData.password);
+        if (error) {
+          toast.error("Email ou mot de passe incorrect");
+        } else {
+          navigate("/");
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -139,6 +182,9 @@ export default function AuthPage() {
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input
                         type="text"
+                        required
+                        value={formData.fullName}
+                        onChange={(e) => updateField("fullName", e.target.value)}
                         placeholder="Amina Diallo"
                         className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200"
                       />
@@ -164,13 +210,22 @@ export default function AuthPage() {
                         </button>
                       ))}
                     </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {role === "etudiant"
+                        ? "Accès : publications, cercles, ressources partagées"
+                        : "Accès : annonces officielles, partage de cours, création de cercles, badge vérifié ✓"}
+                    </p>
                   </div>
 
                   {role === "etudiant" && (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Filière</label>
-                        <select className="w-full px-3 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200 appearance-none">
+                        <select
+                          value={formData.filiere}
+                          onChange={(e) => updateField("filiere", e.target.value)}
+                          className="w-full px-3 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200 appearance-none"
+                        >
                           <option value="">Choisir...</option>
                           {filieres.map((f) => (
                             <option key={f} value={f}>{f}</option>
@@ -179,7 +234,11 @@ export default function AuthPage() {
                       </div>
                       <div>
                         <label className="text-sm font-medium mb-1.5 block">Promotion</label>
-                        <select className="w-full px-3 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200 appearance-none">
+                        <select
+                          value={formData.promotion}
+                          onChange={(e) => updateField("promotion", e.target.value)}
+                          className="w-full px-3 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200 appearance-none"
+                        >
                           <option value="">Choisir...</option>
                           {promotions.map((p) => (
                             <option key={p} value={p}>{p}</option>
@@ -197,6 +256,9 @@ export default function AuthPage() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => updateField("email", e.target.value)}
                     placeholder="amina.diallo@univ.edu"
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200"
                   />
@@ -214,6 +276,9 @@ export default function AuthPage() {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type={showPassword ? "text" : "password"}
+                    required
+                    value={formData.password}
+                    onChange={(e) => updateField("password", e.target.value)}
                     placeholder="••••••••"
                     className="w-full pl-10 pr-12 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200"
                   />
@@ -229,12 +294,19 @@ export default function AuthPage() {
 
               <motion.button
                 type="submit"
+                disabled={loading}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3.5 rounded-xl gradient-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow duration-300 flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl gradient-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow duration-300 flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                {mode === "login" ? "Se connecter" : "Créer mon compte"}
-                <ArrowRight className="w-4 h-4" />
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    {mode === "login" ? "Se connecter" : "Créer mon compte"}
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </motion.button>
 
               <p className="text-center text-xs text-muted-foreground mt-4">
