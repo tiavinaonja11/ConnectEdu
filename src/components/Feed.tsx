@@ -98,21 +98,17 @@ export function Feed() {
           <SearchBar />
         </motion.div>
 
-        {/* Welcome Header — academic style */}
+        {/* Welcome Header — editorial style */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.03 }}
-          className="mb-5"
+          className="mb-6"
         >
-          <div className="flex items-center gap-3 mb-1">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold leading-tight">Bonjour, Amina</h1>
-              <p className="text-xs text-muted-foreground">Votre campus numérique · 3 nouveautés depuis hier</p>
-            </div>
+          <h1 className="text-3xl leading-[1.1] mb-1">Bonjour, Amina</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+            <p className="text-sm text-muted-foreground">3 nouveautés · Campus numérique actif</p>
           </div>
         </motion.div>
 
