@@ -259,10 +259,15 @@ export default function AuthPage() {
                     required
                     value={formData.email}
                     onChange={(e) => updateField("email", e.target.value)}
-                    placeholder="amina.diallo@univ.edu"
+                    placeholder="prenom.nom@univ.edu"
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-alt border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all duration-200"
                   />
                 </div>
+                {mode === "signup" && formData.email && !formData.email.match(/\.(edu|ac\.[a-z]{2,}|univ\.[a-z]{2,})$/i) && (
+                  <p className="text-xs text-warning mt-1.5 flex items-center gap-1">
+                    ⚠️ Utilisez votre adresse email universitaire (.edu, .ac.xx, .univ.xx)
+                  </p>
+                )}
               </div>
 
               <div>
